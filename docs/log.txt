@@ -1,0 +1,19 @@
+** 26 DEC 2023 **
+
+I decided that I will work on my LLM project in a repo separate from the DRAGONBREATH repo for now.
+OPENAI API prompting costs money and requires connection. Thinking of implementing my own LLM.
+This will be quite the endeavor, but I believe I am capable. Below is imagination for the organization.
+
+shakespeare/
+|-- src/
+|   |-- main.cpp               
+|   |-- tokenizer.cpp          
+|   |-- transformer.cpp       
+|   |-- attention.cpp 
+|   |-- language.cpp
+|-- include/
+|   |-- tokenizer.h
+|   |-- transformer.h
+|   |-- attention.h
+|   |-- language.h	
+|-- models/
