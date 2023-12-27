@@ -1,2 +1,0 @@
-# shakespeare
-C++ language model
