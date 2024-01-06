@@ -1,8 +1,9 @@
 ** 26 DEC 2023 **
 
-I decided that I will work on my LLM project in a repo separate from the DRAGONBREATH repo for now.
-OPENAI API prompting costs money and requires connection. Thinking of implementing my own LLM.
-This will be quite the endeavor, but I believe I am capable. Below is imagination for the organization.
+I decided that I will work on my LLM project in a repo separate from the 
+DRAGONBREATH repo for now. OPENAI API prompting costs money and requires 
+connection. Thinking of implementing my own LLM. This will be quite the 
+endeavor, but I believe I am capable. Below is imagination for the organization.
 
 shakespeare/
 |-- src/
@@ -17,3 +18,74 @@ shakespeare/
 |   |-- attention.h
 |   |-- language.h	
 |-- models/
+
+** 27 DEC 2023 **
+
+The SentencePiece pseudocode for training and tokenization is below.
+
+1. Training:
+    Collect a large corpus of text for training.
+    Initialize a vocabulary with each character as a token.
+    While the vocabulary size is less than the desired size:
+        Compute the frequency of each pair of adjacent tokens.
+        Merge the most frequent pair into a new token.
+        Update the vocabulary.
+
+2. Tokenization:
+    Given a new input text:
+        Initialize an empty list of tokens.
+        For each substring of the input text:
+            Find the longest token in the vocabulary that matches substring.
+            Add the token to the list and move to the next substring.
+
+** 29 DEC 2023 **
+
+Will first implement by importing Google's SentencePiece code from their repo.
+
+Have another pseudocode for the Sentence Piece algorithm.
+
+    Initialization:
+        Initialize the vocabulary with individual characters in the training corpus.
+
+    Training Loop:
+        While the vocabulary size is less than the desired size:
+            Compute the frequency of each pair of adjacent tokens in the training corpus.
+            Merge the most frequent pair into a new token.
+            Update the vocabulary with the new token.
+            Replace occurrences of the most frequent pair with the new token in the training corpus.
+
+    Tokenization:
+        Given a new input text:
+            Initialize an empty list of tokens.
+            For each substring of the input text:
+                Find the longest token in the vocabulary that matches the substring.
+                Add the token to the list and move to the next substring.
+
+** 5 JAN 2024 **
+
+Will use the book corpus from hugging face for training the LLM:
+https://storage.googleapis.com/huggingface-nlp/datasets/bookcorpus/bookcorpus.tar.bz2
+
+Here is the citation for the authors' work:
+@InProceedings{Zhu_2015_ICCV,
+    title = {Aligning Books and Movies: Towards Story-Like Visual Explanations by Watching Movies and Reading Books},
+    author = {Zhu, Yukun and Kiros, Ryan and Zemel, Rich and Salakhutdinov, Ruslan and Urtasun, Raquel and Torralba, Antonio and Fidler, Sanja},
+    booktitle = {The IEEE International Conference on Computer Vision (ICCV)},
+    month = {December},
+    year = {2015}
+}
+
+** 6 JAN 2024 **
+
+Decided to implement sentence piece method myself for the sake of education and
+independence. Will include the citation for those who created this method.
+
+@misc{kudo2018sentencepiece,
+      title={SentencePiece: A simple and language independent subword tokenizer
+and detokenizer for Neural Text Processing}, 
+      author={Taku Kudo and John Richardson},
+      year={2018},
+      eprint={1808.06226},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
