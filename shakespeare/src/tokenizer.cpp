@@ -1,16 +1,17 @@
 #include <algorithm>
 #include <functional>
 #include "tokenizer.h"
-#include "frequency.h"
 
 namespace shakespeare
 {
     Tokenizer::Tokenizer() = default;
-    void Tokenizer::Train
-    (
-        const std::vector<Sentence>& corpus,
-        size_t vocab_size
-    )
+    // -------------------------------------------------------------------------
+    Tokenizer::~Tokenizer()
+    {
+    }
+    // -------------------------------------------------------------------------
+    void Tokenizer::Train(const std::vector<Sentence>& corpus,
+			  size_t vocab_size)
     {
         InitVocab(corpus);
 	// TODO: loop until the vocab size is desirable
@@ -18,7 +19,8 @@ namespace shakespeare
 	while (vocab_.size() < vocab_size)
 	{
 	*/
-	    std::pair<Token, Token> most_freq_pair = FindMostFrequentPair(corpus);
+	    std::pair<Token, Token> most_freq_pair =
+		FindMostFrequentPair(corpus);
 	    // TODO: merge most frequent pair into token
 	    // TODO: update the vocabulary
 	    // TODO: replace most frequent pair with new token in corpus
@@ -26,19 +28,20 @@ namespace shakespeare
 	}
 	*/
     }
+    // -------------------------------------------------------------------------
     std::vector<Token> Tokenizer::Tokenize(const Sentence& input)
     {
         return std::vector<Token>();
     }
+    // -------------------------------------------------------------------------
     void Tokenizer::SaveModel(const std::string& filename)
     {
-        
     }
+    // -------------------------------------------------------------------------
     void Tokenizer::LoadModel(const std::string& filename)
     {
-        
     }
-    // generate vocabulary with characters found in the corpus
+    // -------------------------------------------------------------------------
     void Tokenizer::InitVocab(const std::vector<Sentence>& corpus)
     {
         for (const Sentence& sentence : corpus)
@@ -50,6 +53,7 @@ namespace shakespeare
 	    }
         }
     }
+    // -------------------------------------------------------------------------
     // std::pair is not hashable on its own so an implementation was needed
     // for the FindMostFrequentPair function. May look into better organization
     // for adding this implementation later.
@@ -63,12 +67,12 @@ namespace shakespeare
             return h1 ^ h2;
         }
     };
-    std::pair<Token, Token> Tokenizer::FindMostFrequentPair
-    (
-        const std::vector<Sentence>& corpus
-    )
+    // -------------------------------------------------------------------------
+    std::pair<Token, Token> Tokenizer::FindMostFrequentPair(
+	const std::vector<Sentence>& corpus)
     {
-	std::unordered_map<std::pair<Token, Token>, Frequency, pair_hash> pair_frequencies;
+	std::unordered_map<std::pair<Token, Token>, Frequency, pair_hash>
+	    pair_frequencies;
 	for (const Sentence& sentence : corpus)
 	{
 	    size_t sentence_len = sentence.size();
@@ -82,28 +86,23 @@ namespace shakespeare
 		pair_frequencies[pair]++;
 	    }
 	}
-	auto most_freq_pair = std::max_element
-	(
+	auto most_freq_pair = std::max_element(
 	    pair_frequencies.begin(),
-            pair_frequencies.end(),
-	    [](const auto& lhs, const auto& rhs)
+	    pair_frequencies.end(),
+ 	    [](const auto& lhs, const auto& rhs)
 	    {
-		return lhs.second < rhs.second;
-	    }
-        );
+	        return lhs.second < rhs.second;
+	    });
 	return most_freq_pair->first;
     }
+    // -------------------------------------------------------------------------
     void UpdateVocab(const Token& new_token)
     {
-        
     }
-    void ReplaceMostFrequentPair
-    (
-        std::vector<Sentence>& corpus,
-        const std::pair<Token, Token>& pair,
-        const Token& new_token
-    )
+    // -------------------------------------------------------------------------
+    void ReplaceMostFrequentPair(std::vector<Sentence>& corpus,
+        			 const std::pair<Token, Token>& pair,
+        			 const Token& new_token)
     {
-        
     }
-}
+} // namespace shakespeare
