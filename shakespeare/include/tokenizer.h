@@ -1,6 +1,7 @@
 #ifndef TOKENIZER_H
 #define TOKENIZER_H
 
+#include <functional>
 #include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -8,14 +9,17 @@
 
 namespace shakespeare
 {
-    /** A sentence, typically derived from a corpus dataset */
-    using Sentence = std::string;
+    /** type alias for a pair of tokens */
+    using TokenPair = std::pair<std::string, std::string>;
 
-    /** A token, typically derived from a sentence */
-    using Token = std::string;
-
-    /** The number of occurances of a token */
-    using Frequency = size_t;
+    /** overload hash function for std::pair */
+    struct pairhash {
+    	template <typename T1, typename T2>
+        std::size_t operator()(const std::pair<T1, T2>& pair) const
+	{
+            return std::hash<T1>()(pair.first) ^ std::hash<T2>()(pair.second);
+        }
+    };
 
     /** Defines a tokenizer that implements the SentencePiece method */
     class Tokenizer
@@ -31,12 +35,12 @@ namespace shakespeare
 	@param corpus Sentences used to train the tokenizer
 	@param vocab_size Desired vocabulary/token size
 	*/
-        void Train(const std::vector<Sentence>& corpus, size_t vocab_size);
+        void Train(const std::vector<std::string>& corpus, size_t vocab_size);
 
 	/** Uses training to convert a sentence into a vector of tokens
 	@param input Sentence to tokenize
 	*/
-	std::vector<Token> Tokenize(const Sentence& input);
+	std::vector<std::string> Tokenize(const std::string& input);
 
 	/** Saves the vocabulary that was produced from training tokenizer
 	@param filename Name of the file to save vocabulary to
@@ -49,29 +53,23 @@ namespace shakespeare
 	void LoadModel(const std::string& filename);
     private:
 	/** The vocabulary of tokens, each assigned their frequencies */
-        std::unordered_map<Token, Frequency> vocab_;
+        std::unordered_map<std::string, size_t> vocab_;
 
 	/** Generates single-character tokens from corpus
 	@param corpus Sentences, typically used for training purposes
 	*/
-	void InitVocab(const std::vector<Sentence>& corpus);
-
-	/** Produces a mapping of merged token pairs and their frequencies
-	@param corpus The corpus used for training purposes
-	*/
-	std::unordered_map<Token, Frequency> FindMergedTokenFrequencies(
-	    const std::vector<Sentence>& corpus);
+	void InitVocab(const std::vector<std::string>& corpus);
 
 	/** Produces most frequent pair of tokens that appear in corpus
 	@param corpus Sentences, typically used for training purposes
 	*/
-	std::pair<Token, Frequency> FindMostFrequentMergedToken(
-	    const std::vector<Sentence>& corpus);
+	std::pair<TokenPair, size_t> FindMostFrequentTokenPair(
+	    const std::vector<std::string>& corpus);
 
 	/** Loads new token into the vocabulary
 	@param new_token New token that was found or created
 	*/
-	void UpdateVocab(const Token& new_token, Frequency new_token_freq);
+	void UpdateVocab(const TokenPair& pair, size_t frequency);
     }; // class Tokenizer
 } // namespace shakespeare
 
