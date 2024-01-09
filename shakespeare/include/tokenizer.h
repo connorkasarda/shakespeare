@@ -15,7 +15,7 @@ namespace shakespeare
     using Token = std::string;
 
     /** The number of occurances of a token */
-    using Frequency = int;
+    using Frequency = size_t;
 
     /** Defines a tokenizer that implements the SentencePiece method */
     class Tokenizer
@@ -48,33 +48,30 @@ namespace shakespeare
 	*/
 	void LoadModel(const std::string& filename);
     private:
-	/** The vocabulary of tokens */
-        std::unordered_map<Token, int> vocab_;
+	/** The vocabulary of tokens, each assigned their frequencies */
+        std::unordered_map<Token, Frequency> vocab_;
 
 	/** Generates single-character tokens from corpus
 	@param corpus Sentences, typically used for training purposes
 	*/
 	void InitVocab(const std::vector<Sentence>& corpus);
 
+	/** Produces a mapping of merged token pairs and their frequencies
+	@param corpus The corpus used for training purposes
+	*/
+	std::unordered_map<Token, Frequency> FindMergedTokenFrequencies(
+	    const std::vector<Sentence>& corpus);
+
 	/** Produces most frequent pair of tokens that appear in corpus
 	@param corpus Sentences, typically used for training purposes
 	*/
-	std::pair<Token, Token> FindMostFrequentPair(
+	std::pair<Token, Frequency> FindMostFrequentMergedToken(
 	    const std::vector<Sentence>& corpus);
 
 	/** Loads new token into the vocabulary
 	@param new_token New token that was found or created
 	*/
-	void UpdateVocab(const Token& new_token);
-
-	/** Replaces most frequent pair with a merged token
-	@param corpus Sentences used for training purposes
-	@param pair Pair of tokens to replace
-	@param new_token Merged version of token pair
-	*/
-	void ReplaceMostFrequentPair(std::vector<Sentence>& corpus,
-            const std::pair<Token, Token>& pair,
-            const Token& new_token);
+	void UpdateVocab(const Token& new_token, Frequency new_token_freq);
     }; // class Tokenizer
 } // namespace shakespeare
 
