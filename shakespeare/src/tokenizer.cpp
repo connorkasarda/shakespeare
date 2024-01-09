@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <functional>
 #include "tokenizer.h"
 
 namespace shakespeare
@@ -13,21 +12,19 @@ namespace shakespeare
     }
     // -------------------------------------------------------------------------
     void Tokenizer::Train(
-	const std::vector<Sentence>& corpus,
+	const std::vector<std::string>& corpus,
 	size_t vocab_size)
     {
         InitVocab(corpus);
-	/* while (vocab_.size() < vocab_size)
-	{
-	    // TODO: 1. FIND MOST FREQUENTLY OCCURING MERGED TOKEN
-	    // TODO: 2. CREATE NEW TOKEN STRING FROM MERGED TOKEN
-	    // TODO: 3. UPDATE VOCAB WITH NEW TOKEN AND FREQUENCY
-	} */
+	// TODO WHILE THE SIZE OF THE VOCAB IS LESS THAN DESIRABLE SIZE
+	    // TODO 1. FIND MOST FREQUENTLY OCCURING TOKEN PAIR
+	    // TODO 2. CREATE NEW TOKEN FROM MOST FREQUENT TOKEN PAIR
+	    // TODO 3. UPDATE VOCAB WITH NEW MERGED TOKEN AND FREQUENCY
     }
     // -------------------------------------------------------------------------
-    std::vector<Token> Tokenizer::Tokenize(const Sentence& input)
+    std::vector<std::string> Tokenizer::Tokenize(const std::string& input)
     {
-        return std::vector<Token>();
+        return std::vector<std::string>();
     }
     // -------------------------------------------------------------------------
     void Tokenizer::SaveModel(const std::string& filename)
@@ -38,55 +35,40 @@ namespace shakespeare
     {
     }
     // -------------------------------------------------------------------------
-    void Tokenizer::InitVocab(const std::vector<Sentence>& corpus)
+    void Tokenizer::InitVocab(const std::vector<std::string>& corpus)
     {
-        for (const Sentence& sentence : corpus)
+        for (const std::string& sentence : corpus)
         {
 	    for (char c : sentence)
 	    {
-		Token token(1, c);
+		std::string token(1, c);
 		vocab_[token]++;
 	    }
         }
     }
     // -------------------------------------------------------------------------
-    // TODO: CREATE A FUNCTION THAT SIMPLY FINDS THE FREQUENCIES OF PAIRS IN THE
-    //       CORPUS AFTER IT HAS BEEN TEMPORARILY TOKENIZED. THIS WOULD THEN BE
-    // 	     USED BY THE FIND MOST FREQUENT PAIR FUNCTION
-    std::unordered_map<Token, Frequency> FindMergedTokenFrequencies(
-	const std::vector<Sentence>& corpus)
+    std::pair<TokenPair, size_t> Tokenizer::FindMostFrequentTokenPair(
+	const std::vector<std::string>& corpus)
     {
-	return {};
-    }
-    // -------------------------------------------------------------------------
-    std::pair<Token, Frequency> Tokenizer::FindMostFrequentMergedToken(
-	const std::vector<Sentence>& corpus)
-    {
-	std::unordered_map<Token, Frequency> merged_token_freqs;
-	// TODO: NEED TO TOKENIZE EACH SENTENCE FIRST, MAY CHANGE THE
-	//       IMPLEMENTATION BELOW. THIS WOULD REQUIRE USE OF THE
-	//       TOKENIZE METHOD IN THIS TOKENIZER CLASS. ITERATE OVER
-	// 	 EACH PAIR OF MERGED TOKENS, UPDATING MERGED_TOKEN_FREQS
-	//	 AS YOU GO. THIS WILL BE DONE BY FIND MERGED TOKEN FREQUENCIES
-	//       FUNCTION THAT CAN BE FOUND ABOVE THIS FUNCTION.
-	auto most_freq_token_and_freq = std::max_element(
-	    merged_token_freqs.begin(),
-	    merged_token_freqs.end(),
+	std::unordered_map<TokenPair, size_t, pairhash> token_pairs_freqs;
+	// TODO NEED TO TOKENIZE EACH SENTENCE FIRST.
+	//      THIS WOULD REQUIRE USE OF THE TOKENIZE METHOD.
+        //      ITERATE OVER EACH PAIR OF TOKENS,
+	//	UPDATING TOKEN PAIRS FREQS VALUE AS YOU GO.
+	auto most_freq_pair = std::max_element(
+	    token_pairs_freqs.begin(),
+	    token_pairs_freqs.end(),
  	    [](const auto& lhs, const auto& rhs)
 	    {
 	        return lhs.second < rhs.second;
 	    });
-	return std::make_pair(Token(), Frequency()); // most_freq_token_and_freq
+	return {most_freq_pair->first, most_freq_pair->second};
     }
     // -------------------------------------------------------------------------
-    // TODO: REQUIRES A REWORK SINCE WHEN A NEW TOKEN IS ADDED, IT ISN'T SIMPLY
-    //       INCREASING ITS OCCURANCE BY 1. NEED TO MAKE SURE NEW TOKEN'S
-    // 	     OCCURANCE IS ADDED AND THAT PREVIOUS OCCURANCE OF TOKENS MERGED
-    //	     INTO NEW TOKEN SHOULD BE REMOVED
-    void Tokenizer::UpdateVocab(const Token& new_token, Frequency new_token_freq)
+    void Tokenizer::UpdateVocab(const TokenPair& pair, size_t frequency)
     {
-	// vocab_[new_token_from_a_&_b] = ~~ actual discovered frequency ~~
-	// vocab_[token_a] -= ~~ actual discovered frequency of new_token ~~
-	// vocab_[token_b] -= ~~ actual discovered frequency of new_token ~~
+	vocab_[pair.first + pair.second] = frequency;
+	vocab_[pair.first] -= frequency;
+	vocab_[pair.second] -= frequency;
     }
 } // namespace shakespeare
