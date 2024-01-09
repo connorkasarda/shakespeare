@@ -4,29 +4,25 @@
 
 namespace shakespeare
 {
-    Tokenizer::Tokenizer() = default;
+    Tokenizer::Tokenizer()
+    {
+    }
     // -------------------------------------------------------------------------
     Tokenizer::~Tokenizer()
     {
     }
     // -------------------------------------------------------------------------
-    void Tokenizer::Train(const std::vector<Sentence>& corpus,
-			  size_t vocab_size)
+    void Tokenizer::Train(
+	const std::vector<Sentence>& corpus,
+	size_t vocab_size)
     {
         InitVocab(corpus);
-	// TODO: loop until the vocab size is desirable
-        /*
-	while (vocab_.size() < vocab_size)
+	/* while (vocab_.size() < vocab_size)
 	{
-	*/
-	    std::pair<Token, Token> most_freq_pair =
-		FindMostFrequentPair(corpus);
-	    // TODO: merge most frequent pair into token
-	    // TODO: update the vocabulary
-	    // TODO: replace most frequent pair with new token in corpus
-	/*
-	}
-	*/
+	    // TODO: 1. FIND MOST FREQUENTLY OCCURING MERGED TOKEN
+	    // TODO: 2. CREATE NEW TOKEN STRING FROM MERGED TOKEN
+	    // TODO: 3. UPDATE VOCAB WITH NEW TOKEN AND FREQUENCY
+	} */
     }
     // -------------------------------------------------------------------------
     std::vector<Token> Tokenizer::Tokenize(const Sentence& input)
@@ -54,55 +50,43 @@ namespace shakespeare
         }
     }
     // -------------------------------------------------------------------------
-    // std::pair is not hashable on its own so an implementation was needed
-    // for the FindMostFrequentPair function. May look into better organization
-    // for adding this implementation later.
-    struct pair_hash
-    {
-        template <class T1, class T2>
-        std::size_t operator () (const std::pair<T1, T2>& p) const
-        {
-            auto h1 = std::hash<T1>{}(p.first);
-            auto h2 = std::hash<T2>{}(p.second);
-            return h1 ^ h2;
-        }
-    };
-    // -------------------------------------------------------------------------
-    std::pair<Token, Token> Tokenizer::FindMostFrequentPair(
+    // TODO: CREATE A FUNCTION THAT SIMPLY FINDS THE FREQUENCIES OF PAIRS IN THE
+    //       CORPUS AFTER IT HAS BEEN TEMPORARILY TOKENIZED. THIS WOULD THEN BE
+    // 	     USED BY THE FIND MOST FREQUENT PAIR FUNCTION
+    std::unordered_map<Token, Frequency> FindMergedTokenFrequencies(
 	const std::vector<Sentence>& corpus)
     {
-	std::unordered_map<std::pair<Token, Token>, Frequency, pair_hash>
-	    pair_frequencies;
-	for (const Sentence& sentence : corpus)
-	{
-	    size_t sentence_len = sentence.size();
-	    for (size_t i = 0; i < sentence_len - 1; ++i)
-	    {
-		std::pair<Token, Token> pair =
-		{
-		    Token(1, sentence[i]),
-		    Token(1, sentence[i + 1])
-		};
-		pair_frequencies[pair]++;
-	    }
-	}
-	auto most_freq_pair = std::max_element(
-	    pair_frequencies.begin(),
-	    pair_frequencies.end(),
+	return {};
+    }
+    // -------------------------------------------------------------------------
+    std::pair<Token, Frequency> Tokenizer::FindMostFrequentMergedToken(
+	const std::vector<Sentence>& corpus)
+    {
+	std::unordered_map<Token, Frequency> merged_token_freqs;
+	// TODO: NEED TO TOKENIZE EACH SENTENCE FIRST, MAY CHANGE THE
+	//       IMPLEMENTATION BELOW. THIS WOULD REQUIRE USE OF THE
+	//       TOKENIZE METHOD IN THIS TOKENIZER CLASS. ITERATE OVER
+	// 	 EACH PAIR OF MERGED TOKENS, UPDATING MERGED_TOKEN_FREQS
+	//	 AS YOU GO. THIS WILL BE DONE BY FIND MERGED TOKEN FREQUENCIES
+	//       FUNCTION THAT CAN BE FOUND ABOVE THIS FUNCTION.
+	auto most_freq_token_and_freq = std::max_element(
+	    merged_token_freqs.begin(),
+	    merged_token_freqs.end(),
  	    [](const auto& lhs, const auto& rhs)
 	    {
 	        return lhs.second < rhs.second;
 	    });
-	return most_freq_pair->first;
+	return std::make_pair(Token(), Frequency()); // most_freq_token_and_freq
     }
     // -------------------------------------------------------------------------
-    void UpdateVocab(const Token& new_token)
+    // TODO: REQUIRES A REWORK SINCE WHEN A NEW TOKEN IS ADDED, IT ISN'T SIMPLY
+    //       INCREASING ITS OCCURANCE BY 1. NEED TO MAKE SURE NEW TOKEN'S
+    // 	     OCCURANCE IS ADDED AND THAT PREVIOUS OCCURANCE OF TOKENS MERGED
+    //	     INTO NEW TOKEN SHOULD BE REMOVED
+    void Tokenizer::UpdateVocab(const Token& new_token, Frequency new_token_freq)
     {
-    }
-    // -------------------------------------------------------------------------
-    void ReplaceMostFrequentPair(std::vector<Sentence>& corpus,
-        			 const std::pair<Token, Token>& pair,
-        			 const Token& new_token)
-    {
+	// vocab_[new_token_from_a_&_b] = ~~ actual discovered frequency ~~
+	// vocab_[token_a] -= ~~ actual discovered frequency of new_token ~~
+	// vocab_[token_b] -= ~~ actual discovered frequency of new_token ~~
     }
 } // namespace shakespeare

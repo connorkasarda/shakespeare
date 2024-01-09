@@ -89,3 +89,17 @@ and detokenizer for Neural Text Processing},
       archivePrefix={arXiv},
       primaryClass={cs.CL}
 }
+
+** 8 JAN 2024 **
+
+I am realizing that my initial approach has some flaws that may require some rethinking when it comes to the tokenizer.
+
+Will need to consider how to keep track of vocab, token frequency, and new tokens formed from merged tokens due to high frequency.
+
+I'm thinking of making a 'tokenized_corpus' variable of which is basically the corpus but each character is converted to a string.
+
+In other words, the tokenized_corpus is a vector of vector of strings (ex: vector of vector of tokens), whereas the corpus is a vector of strings (ex: vector of sentences).
+
+The tokenized_corpus will be created when the InitVocab function runs.
+
+NEVERMIND! Using the current values from vocab, I could just simply go through the corpus sentence-by-sentence and tokenize the sentence before further calculations are made.
