@@ -103,3 +103,12 @@ In other words, the tokenized_corpus is a vector of vector of strings (ex: vecto
 The tokenized_corpus will be created when the InitVocab function runs.
 
 NEVERMIND! Using the current values from vocab, I could just simply go through the corpus sentence-by-sentence and tokenize the sentence before further calculations are made.
+
+** 15 JAN 2024 **
+
+The tokenizer will need a ...
+1. normalizer (exs: NFD, NFKC, ...)
+2. model (exs: byte pair encoding, word piece, unigram, sentence piece)
+3. and so on...
+
+Composition will be used here, allowing the tokenizer to switch between different types of normalizers, models, etc. via interfaces.
