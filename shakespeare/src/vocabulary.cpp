@@ -17,7 +17,7 @@ namespace shakespeare
 
     }
     // ------------------------------------------------------------------------
-    void Vocabulary::AddToken(const std::wstring& token)
+    void Vocabulary::AddToken(const std::string& token)
     {
         auto iter = token_2_index_.find(token);
         if (iter == token_2_index_.end())
@@ -34,8 +34,8 @@ namespace shakespeare
         }
     }
     // ------------------------------------------------------------------------
-    void Vocabulary::MergeTokens(const std::wstring& left,
-                                 const std::wstring& right,
+    void Vocabulary::MergeTokens(const std::string& left,
+                                 const std::string& right,
                                  size_t frequency)
     {
         auto iter_left = token_2_index_.find(left);
@@ -43,7 +43,7 @@ namespace shakespeare
         if (iter_left != token_2_index_.end() &&
             iter_right != token_2_index_.end())
         {
-            std::wstring new_token = left + right;
+            std::string new_token = left + right;
 	    token_2_index_[new_token] = index_counter_;
             index_2_token_[index_counter_] = new_token;
             token_2_freq_[new_token] = frequency;
@@ -56,26 +56,26 @@ namespace shakespeare
         }
     }
     // ------------------------------------------------------------------------
-    void Vocabulary::RemoveToken(const std::wstring& token)
+    void Vocabulary::RemoveToken(const std::string& token)
     {
 	RemoveTokenInternal(token);
     }
     // ------------------------------------------------------------------------
-    size_t Vocabulary::GetTokenIndex(const std::wstring& token) const
+    size_t Vocabulary::GetTokenIndex(const std::string& token) const
     {
 	auto iter = token_2_index_.find(token);
         return (iter != token_2_index_.end()) ?
 	    iter->second : std::numeric_limits<size_t>::max();
     }
     // ------------------------------------------------------------------------
-    std::wstring Vocabulary::GetIndexToken(size_t index) const
+    std::string Vocabulary::GetIndexToken(size_t index) const
     {
 	auto iter = index_2_token_.find(index);
         return (iter != index_2_token_.end()) ?
-            iter->second : L"";
+            iter->second : "";
     }
     // ------------------------------------------------------------------------
-    size_t Vocabulary::GetTokenFrequency(const std::wstring& token) const
+    size_t Vocabulary::GetTokenFrequency(const std::string& token) const
     {
 	auto iter = token_2_freq_.find(token);
         return (iter != token_2_freq_.end()) ?
@@ -87,7 +87,7 @@ namespace shakespeare
 	return count_;
     }
     // ------------------------------------------------------------------------
-    void Vocabulary::RemoveTokenInternal(const std::wstring& token)
+    void Vocabulary::RemoveTokenInternal(const std::string& token)
     {
 	auto iter = token_2_index_.find(token);
 	if (iter != token_2_index_.end())

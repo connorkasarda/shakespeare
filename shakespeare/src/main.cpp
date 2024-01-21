@@ -1,6 +1,9 @@
 #include <iostream>
 #include "shakespeare.h"
 
+#include <iostream>
+#include <vector>
+
 int main(int argc, char** argv)
 {
     if (argc != 1)
